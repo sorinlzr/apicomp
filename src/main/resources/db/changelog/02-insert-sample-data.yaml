@@ -1,0 +1,127 @@
+databaseChangeLog:
+  - changeSet:
+      id: 6
+      author: sorinlzr
+      changes:
+        - insert:
+            tableName: university
+            columns:
+              - column:
+                  name: name
+                  value: "Springfield University"
+
+  - changeSet:
+      id: 7
+      author: sorinlzr
+      changes:
+        - insert:
+            tableName: student
+            columns:
+              - column:
+                  name: name
+                  value: "John Doe"
+              - column:
+                  name: email
+                  value: "johndoe@example.com"
+              - column:
+                  name: university_id
+                  valueNumeric: 1
+        - insert:
+            tableName: student
+            columns:
+              - column:
+                  name: name
+                  value: "Jane Smith"
+              - column:
+                  name: email
+                  value: "janesmith@example.com"
+              - column:
+                  name: university_id
+                  valueNumeric: 1
+
+  - changeSet:
+      id: 8
+      author: sorinlzr
+      changes:
+        - insert:
+            tableName: teacher
+            columns:
+              - column:
+                  name: name
+                  value: "Dr. Alan Turing"
+              - column:
+                  name: department
+                  value: "Computer Science"
+              - column:
+                  name: university_id
+                  valueNumeric: 1
+        - insert:
+            tableName: teacher
+            columns:
+              - column:
+                  name: name
+                  value: "Dr. Ada Lovelace"
+              - column:
+                  name: department
+                  value: "Mathematics"
+              - column:
+                  name: university_id
+                  valueNumeric: 1
+
+  - changeSet:
+      id: 9
+      author: sorinlzr
+      changes:
+        - insert:
+            tableName: course
+            columns:
+              - column:
+                  name: title
+                  value: "Introduction to Computer Science"
+              - column:
+                  name: description
+                  value: "An introductory course in computer science concepts."
+              - column:
+                  name: teacher_id
+                  valueNumeric: 1
+        - insert:
+            tableName: course
+            columns:
+              - column:
+                  name: title
+                  value: "Advanced Mathematics"
+              - column:
+                  name: description
+                  value: "An advanced course in mathematics concepts."
+              - column:
+                  name: teacher_id
+                  valueNumeric: 2
+
+  - changeSet:
+      id: 10
+      author: sorinlzr
+      changes:
+        - insert:
+            tableName: enrollment
+            columns:
+              - column:
+                  name: student_id
+                  valueNumeric: 1
+              - column:
+                  name: course_id
+                  valueNumeric: 1
+              - column:
+                  name: enrollment_date
+                  valueDate: "2023-09-01"
+        - insert:
+            tableName: enrollment
+            columns:
+              - column:
+                  name: student_id
+                  valueNumeric: 2
+              - column:
+                  name: course_id
+                  valueNumeric: 2
+              - column:
+                  name: enrollment_date
+                  valueDate: "2023-09-01"
