@@ -2,4 +2,20 @@ databaseChangeLog:
   - include:
       file: db/changelog/01-create-tables.yaml
   - include:
-      file: db/changelog/02-insert-sample-data.yaml
+      file: db/changelog/02-insert-sample-data-part1.yaml
+  - include:
+      file: db/changelog/02-insert-sample-data-part2.yaml
+  - include:
+      file: db/changelog/02-insert-sample-data-part3.yaml
+  - include:
+      file: db/changelog/02-insert-sample-data-part4.yaml
+  - include:
+      file: db/changelog/02-insert-sample-data-part5.yaml
+  - include:
+      file: db/changelog/02-insert-sample-data-part6.yaml
+  - include:
+      file: db/changelog/02-insert-sample-data-part7.yaml
+  - include:
+      file: db/changelog/02-insert-sample-data-part8.yaml
+  - include:
+      file: db/changelog/02-insert-sample-data-part9.yaml
