@@ -5,8 +5,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Table(name = "university")
 @Data
@@ -18,11 +16,5 @@ public class University {
 
     @Column(nullable = false)
     private String name;
-
-    @OneToMany(mappedBy = "university")
-    private List<Student> students;
-
-    @OneToMany(mappedBy = "university")
-    private List<Teacher> teachers;
 
 }

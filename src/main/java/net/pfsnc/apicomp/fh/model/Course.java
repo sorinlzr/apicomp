@@ -5,8 +5,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Table(name = "course")
 @Data
@@ -24,8 +22,4 @@ public class Course {
     @ManyToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
-
-    @OneToMany(mappedBy = "course")
-    private List<Enrollment> enrollments;
-
 }
