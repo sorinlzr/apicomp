@@ -3,19 +3,20 @@ package net.pfsnc.apicomp.fh.service;
 import lombok.RequiredArgsConstructor;
 import net.pfsnc.apicomp.fh.model.Course;
 import net.pfsnc.apicomp.fh.repository.CourseRepository;
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class CourseService {
 
     private final CourseRepository courseRepository;
 
-    public List<Course> findAll() {
-        return courseRepository.findAll();
+    public Page<Course> findAll(Pageable pageable) {
+        return courseRepository.findAll(pageable);
     }
 
     public Optional<Course> findById(Long id) {
