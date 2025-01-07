@@ -1,9 +1,11 @@
 package net.pfsnc.apicomp.fh.model;
 
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.pfsnc.apicomp.fh.model.utils.TeacherDeserializer;
 
 @Entity
 @Table(name = "course")
@@ -21,5 +23,6 @@ public class Course {
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")
+    @JsonDeserialize(using = TeacherDeserializer.class)
     private Teacher teacher;
 }
