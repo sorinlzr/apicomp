@@ -1,0 +1,47 @@
+type Query {
+    students(limit: Int, offset: Int): [Student]
+    student(id: ID!): Student
+    courses(limit: Int, offset: Int): [Course]
+    course(id: ID!): Course
+    teachers(limit: Int, offset: Int): [Teacher]
+    teacher(id: ID!): Teacher
+    enrollments(limit: Int, offset: Int): [Enrollment]
+    enrollment(id: ID!): Enrollment
+    universities(limit: Int, offset: Int): [University]
+    university(id: ID!): University
+}
+
+
+type Student {
+    id: ID
+    name: String
+    email: String
+#    enrollments: [Enrollment]
+}
+
+type Course {
+    id: ID
+    title: String
+    description: String
+    teacher: Teacher
+    enrollments: [Enrollment]
+}
+
+type Enrollment {
+    id: ID
+    student: Student
+    course: Course
+    enrollmentDate: String
+}
+
+type Teacher {
+    id: ID
+    name: String
+    department: String
+    courses: [Course]
+}
+
+type University {
+    id: ID
+    name: String
+}
