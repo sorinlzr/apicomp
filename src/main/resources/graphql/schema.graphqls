@@ -13,6 +13,7 @@ type Query {
 
 type Mutation {
     createStudent(name: String!, email: String!): Student
+    updateStudent(id: ID!, name: String!, email: String!): Student
 }
 
 

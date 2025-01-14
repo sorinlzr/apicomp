@@ -38,5 +38,14 @@ public class StudentControllerGraphQL {
         student.setEmail(email);
         return studentService.save(student);
     }
+
+    @MutationMapping
+    public Student updateStudent(@Argument Long id, @Argument String name, @Argument String email) {
+        return studentService.findById(id).map(student -> {
+            student.setName(name);
+            student.setEmail(email);
+            return studentService.save(student);
+        }).orElse(null);
+    }
 }
 
