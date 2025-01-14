@@ -3,6 +3,7 @@ package net.pfsnc.apicomp.fh.controller.graphql;
 import net.pfsnc.apicomp.fh.model.Student;
 import net.pfsnc.apicomp.fh.service.StudentService;
 import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
@@ -28,6 +29,14 @@ public class StudentControllerGraphQL {
     @QueryMapping
     public Student student(@Argument Long id) {
         return studentService.findById(id).orElse(null);
+    }
+
+    @MutationMapping
+    public Student createStudent(@Argument String name, @Argument String email) {
+        Student student = new Student();
+        student.setName(name);
+        student.setEmail(email);
+        return studentService.save(student);
     }
 }
 

@@ -11,6 +11,10 @@ type Query {
     university(id: ID!): University
 }
 
+type Mutation {
+    createStudent(name: String!, email: String!): Student
+}
+
 
 type Student {
     id: ID
