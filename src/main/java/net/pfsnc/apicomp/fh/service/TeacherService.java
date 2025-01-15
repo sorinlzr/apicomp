@@ -3,6 +3,8 @@ package net.pfsnc.apicomp.fh.service;
 import lombok.RequiredArgsConstructor;
 import net.pfsnc.apicomp.fh.model.Teacher;
 import net.pfsnc.apicomp.fh.repository.TeacherRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +18,11 @@ public class TeacherService {
 
     public List<Teacher> findAll() {
         return teacherRepository.findAll();
+    }
+
+    public List<Teacher> findAllWithPagination(int limit, int offset) {
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        return teacherRepository.findAll(pageable).getContent();
     }
 
     public Optional<Teacher> findById(Long id) {

@@ -16,6 +16,8 @@ type Mutation {
     updateStudent(id: ID!, name: String!, email: String!): Student
     createCourse(title: String!, description: String!): Course
     updateCourse(id: ID!, title: String!, description: String!): Course
+    createTeacher(name: String!, department: String!): Teacher
+    updateTeacher(id: ID!, name: String!, department: String!): Teacher
 }
 
 
