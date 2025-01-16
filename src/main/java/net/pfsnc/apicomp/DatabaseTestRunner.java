@@ -1,6 +1,6 @@
 package net.pfsnc.apicomp;
 
-import net.pfsnc.apicomp.fh.model.Teacher;
+import net.pfsnc.apicomp.fh.dto.TeacherDTO;
 import net.pfsnc.apicomp.fh.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -22,7 +22,7 @@ public class DatabaseTestRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        List<Teacher> teachers = teacherService.findAll();
+        List<TeacherDTO> teachers = teacherService.findAll();
         teachers.stream().limit(50).forEach(teacher -> System.out.println(teacher.getName()));
     }
 }
