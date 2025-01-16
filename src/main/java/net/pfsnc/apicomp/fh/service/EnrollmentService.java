@@ -34,6 +34,13 @@ public class EnrollmentService {
                 .toList();
     }
 
+    public List<EnrollmentDTO> findByStudentId(Long studentId) {
+        return enrollmentRepository.findByStudentId(studentId)
+                .stream()
+                .map(EnrollmentMapper::toEntrollmentDTO)
+                .toList();
+    }
+
     public EnrollmentDTO findById(Long id) {
         return enrollmentRepository.findById(id).map(EnrollmentMapper::toEntrollmentDTO).orElse(null);
     }

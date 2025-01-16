@@ -5,7 +5,8 @@ type Query {
     course(id: ID!): Course
     teachers(limit: Int, offset: Int): [Teacher]
     teacher(id: ID!): Teacher
-    enrollments(limit: Int, offset: Int): [Enrollment]
+    enrollmentsForCourse(courseId: Int): [Enrollment]
+    enrollmentsForStudent(studentId: Int): [Enrollment]
     enrollment(id: ID!): Enrollment
     universities(limit: Int, offset: Int): [University]
     university(id: ID!): University
@@ -18,6 +19,7 @@ type Mutation {
     updateCourse(id: ID!, title: String!, description: String!): Course
     createTeacher(name: String!, department: String!): Teacher
     updateTeacher(id: ID!, name: String!, department: String!): Teacher
+    createEnrollment(courseId: Int!, studentId: Int!, enrollmentDate: String): Enrollment
 }
 
 

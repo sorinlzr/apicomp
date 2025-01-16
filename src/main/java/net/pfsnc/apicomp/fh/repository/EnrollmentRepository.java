@@ -12,5 +12,6 @@ import java.util.List;
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     Page<Enrollment> findAll(Pageable pageable);
     List<Enrollment> findByCourseId(Long courseId);
+    List<Enrollment> findByStudentId(Long studentId);
 
 }
