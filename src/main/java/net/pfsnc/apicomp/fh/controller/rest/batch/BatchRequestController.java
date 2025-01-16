@@ -1,10 +1,10 @@
 package net.pfsnc.apicomp.fh.controller.rest.batch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.pfsnc.apicomp.fh.model.Course;
-import net.pfsnc.apicomp.fh.model.Enrollment;
-import net.pfsnc.apicomp.fh.model.Student;
-import net.pfsnc.apicomp.fh.model.Teacher;
+import net.pfsnc.apicomp.fh.dto.CourseDTO;
+import net.pfsnc.apicomp.fh.dto.EnrollmentDTO;
+import net.pfsnc.apicomp.fh.dto.StudentDTO;
+import net.pfsnc.apicomp.fh.dto.TeacherDTO;
 import net.pfsnc.apicomp.fh.service.CourseService;
 import net.pfsnc.apicomp.fh.service.EnrollmentService;
 import net.pfsnc.apicomp.fh.service.StudentService;
@@ -80,19 +80,19 @@ public class BatchRequestController {
                     case "POST":
                         switch (request.getEndpoint()) {
                             case "/students" -> {
-                                Student student = objectMapper.convertValue(request.getBody(), Student.class);
+                                StudentDTO student = objectMapper.convertValue(request.getBody(), StudentDTO.class);
                                 responses.add(new BatchResponse(request, ResponseEntity.ok(studentService.save(student))));
                             }
                             case "/teachers" -> {
-                                Teacher teacher = objectMapper.convertValue(request.getBody(), Teacher.class);
+                                TeacherDTO teacher = objectMapper.convertValue(request.getBody(), TeacherDTO.class);
                                 responses.add(new BatchResponse(request, ResponseEntity.ok(teacherService.save(teacher))));
                             }
                             case "/courses" -> {
-                                Course course = objectMapper.convertValue(request.getBody(), Course.class);
+                                CourseDTO course = objectMapper.convertValue(request.getBody(), CourseDTO.class);
                                 responses.add(new BatchResponse(request, ResponseEntity.ok(courseService.save(course))));
                             }
                             case "/enrollments" -> {
-                                Enrollment enrollment = objectMapper.convertValue(request.getBody(), Enrollment.class);
+                                EnrollmentDTO enrollment = objectMapper.convertValue(request.getBody(), EnrollmentDTO.class);
                                 responses.add(new BatchResponse(request, ResponseEntity.ok(enrollmentService.save(enrollment))));
                             }
                         }

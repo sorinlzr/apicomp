@@ -21,6 +21,6 @@ public class RealTimeUpdateController {
 
     @GetMapping("/student-count")
     public long getCurrentStudentCount(Pageable pageable) {
-        return studentService.findAll(pageable).getTotalElements();
+        return studentService.findAll(pageable).size();
     }
 }

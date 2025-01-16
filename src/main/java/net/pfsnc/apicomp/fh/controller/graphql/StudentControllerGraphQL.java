@@ -1,6 +1,6 @@
 package net.pfsnc.apicomp.fh.controller.graphql;
 
-import net.pfsnc.apicomp.fh.model.Student;
+import net.pfsnc.apicomp.fh.dto.StudentDTO;
 import net.pfsnc.apicomp.fh.service.StudentService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -18,7 +18,7 @@ public class StudentControllerGraphQL {
     }
 
     @QueryMapping
-    public List<Student> students(@Argument Integer limit, @Argument Integer offset) {
+    public List<StudentDTO> students(@Argument Integer limit, @Argument Integer offset) {
         System.out.println("Fetching students with limit: " + limit + ", offset: " + offset);
 
         int actualLimit = (limit != null) ? limit : 10;
@@ -27,25 +27,27 @@ public class StudentControllerGraphQL {
     }
 
     @QueryMapping
-    public Student student(@Argument Long id) {
-        return studentService.findById(id).orElse(null);
+    public StudentDTO student(@Argument Long id) {
+        return studentService.findById(id);
     }
 
     @MutationMapping
-    public Student createStudent(@Argument String name, @Argument String email) {
-        Student student = new Student();
+    public StudentDTO createStudent(@Argument String name, @Argument String email) {
+        StudentDTO student = new StudentDTO();
         student.setName(name);
         student.setEmail(email);
         return studentService.save(student);
     }
 
     @MutationMapping
-    public Student updateStudent(@Argument Long id, @Argument String name, @Argument String email) {
-        return studentService.findById(id).map(student -> {
-            student.setName(name);
-            student.setEmail(email);
-            return studentService.save(student);
-        }).orElse(null);
+    public StudentDTO updateStudent(@Argument Long id, @Argument String name, @Argument String email) {
+        StudentDTO studentDTO = studentService.findById(id);
+        if (studentDTO == null) {
+            return null;
+        }
+        studentDTO.setName(name);
+        studentDTO.setEmail(email);
+        return studentService.save(studentDTO);
     }
 }
 

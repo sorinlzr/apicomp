@@ -1,12 +1,11 @@
 package net.pfsnc.apicomp.fh.controller.rest;
 
-import net.pfsnc.apicomp.fh.model.Teacher;
+import net.pfsnc.apicomp.fh.dto.TeacherDTO;
 import net.pfsnc.apicomp.fh.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/teachers")
@@ -20,17 +19,17 @@ public class TeacherController {
     }
 
     @GetMapping
-    public List<Teacher> getAllTeachers() {
+    public List<TeacherDTO> getAllTeachers() {
         return teacherService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Optional<Teacher> getTeacherById(@PathVariable Long id) {
+    public TeacherDTO getTeacherById(@PathVariable Long id) {
         return teacherService.findById(id);
     }
 
     @PostMapping
-    public Teacher createTeacher(@RequestBody Teacher teacher) {
+    public TeacherDTO createTeacher(@RequestBody TeacherDTO teacher) {
         return teacherService.save(teacher);
     }
 }
