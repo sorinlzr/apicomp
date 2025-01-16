@@ -1,15 +1,15 @@
 package net.pfsnc.apicomp.fh.service;
 
 import lombok.RequiredArgsConstructor;
+import net.pfsnc.apicomp.fh.dto.StudentDTO;
+import net.pfsnc.apicomp.fh.mapper.StudentMapper;
 import net.pfsnc.apicomp.fh.model.Student;
 import net.pfsnc.apicomp.fh.repository.StudentRepository;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,21 +17,26 @@ public class StudentService {
 
     private final StudentRepository studentRepository;
 
-    public Page<Student> findAll(Pageable pageable) {
-        return studentRepository.findAll(pageable);
+    public List<StudentDTO> findAll(Pageable pageable) {
+        return studentRepository.findAll(pageable)
+                .map(StudentMapper::toStudentDTO).toList();
     }
 
-    public List<Student> findAllWithPagination(int limit, int offset) {
+    public List<StudentDTO> findAllWithPagination(int limit, int offset) {
         Pageable pageable = PageRequest.of(offset / limit, limit);
-        return studentRepository.findAll(pageable).getContent();
+        return studentRepository.findAll(pageable).map(StudentMapper::toStudentDTO).toList();
     }
 
-    public Optional<Student> findById(Long id) {
-        return studentRepository.findById(id);
+    public StudentDTO findById(Long id) {
+        return studentRepository.findById(id).map(StudentMapper::toStudentDTO).orElse(null);
     }
 
-    public Student save(Student student) {
-        return studentRepository.save(student);
+    public StudentDTO save(StudentDTO student) {
+        Student newStudent = new Student();
+        newStudent.setName(student.getName());
+        newStudent.setEmail(student.getEmail());
+        newStudent = studentRepository.save(newStudent);
+        return StudentMapper.toStudentDTO(newStudent);
     }
 
     public void deleteById(Long id) {

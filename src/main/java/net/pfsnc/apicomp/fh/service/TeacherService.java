@@ -1,6 +1,8 @@
 package net.pfsnc.apicomp.fh.service;
 
 import lombok.RequiredArgsConstructor;
+import net.pfsnc.apicomp.fh.dto.TeacherDTO;
+import net.pfsnc.apicomp.fh.mapper.TeacherMapper;
 import net.pfsnc.apicomp.fh.model.Teacher;
 import net.pfsnc.apicomp.fh.repository.TeacherRepository;
 import org.springframework.data.domain.PageRequest;
@@ -8,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,21 +17,25 @@ public class TeacherService {
 
     private final TeacherRepository teacherRepository;
 
-    public List<Teacher> findAll() {
-        return teacherRepository.findAll();
+    public List<TeacherDTO> findAll() {
+        return teacherRepository.findAll().stream().map(TeacherMapper::toTeacherDTO).toList();
     }
 
-    public List<Teacher> findAllWithPagination(int limit, int offset) {
+    public List<TeacherDTO> findAllWithPagination(int limit, int offset) {
         Pageable pageable = PageRequest.of(offset / limit, limit);
-        return teacherRepository.findAll(pageable).getContent();
+        return teacherRepository.findAll(pageable).map(TeacherMapper::toTeacherDTO).toList();
     }
 
-    public Optional<Teacher> findById(Long id) {
-        return teacherRepository.findById(id);
+    public TeacherDTO findById(Long id) {
+        return teacherRepository.findById(id).map(TeacherMapper::toTeacherDTO).orElse(null);
     }
 
-    public Teacher save(Teacher teacher) {
-        return teacherRepository.save(teacher);
+    public TeacherDTO save(TeacherDTO teacher) {
+        Teacher newTeacher = new Teacher();
+        newTeacher.setName(teacher.getName());
+        newTeacher.setDepartment(teacher.getDepartment());
+        newTeacher = teacherRepository.save(newTeacher);
+        return TeacherMapper.toTeacherDTO(newTeacher);
     }
 
     public void deleteById(Long id) {
