@@ -13,5 +13,8 @@ spring:
   liquibase:
     change-log: db/changelog/db.changelog-master.yaml
     enabled: false
+  graphql:
+    websocket:
+      path: /graphql
 testRunner:
   database: false

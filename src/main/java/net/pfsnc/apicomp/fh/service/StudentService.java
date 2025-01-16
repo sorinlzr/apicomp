@@ -42,4 +42,8 @@ public class StudentService {
     public void deleteById(Long id) {
         studentRepository.deleteById(id);
     }
+
+    public long count() {
+        return studentRepository.count();
+    }
 }

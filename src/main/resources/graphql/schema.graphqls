@@ -22,6 +22,10 @@ type Mutation {
     createEnrollment(courseId: Int!, studentId: Int!, enrollmentDate: String): Enrollment
 }
 
+type Subscription {
+    studentCount: Int
+}
+
 
 type Student {
     id: ID

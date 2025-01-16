@@ -2,19 +2,30 @@ package net.pfsnc.apicomp.fh.controller.graphql;
 
 import net.pfsnc.apicomp.fh.dto.StudentDTO;
 import net.pfsnc.apicomp.fh.service.StudentService;
+import org.reactivestreams.Publisher;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SubscriptionMapping;
 import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Controller
 public class StudentControllerGraphQL {
     private final StudentService studentService;
 
+    private final AtomicLong studentCount;
+    private FluxSink<Long> studentCountSink;
+    private final Flux<Long> studentCountPublisher;
+
     public StudentControllerGraphQL(StudentService studentService) {
         this.studentService = studentService;
+        studentCount = new AtomicLong(studentService.count());
+        this.studentCountPublisher = Flux.<Long>create(emitter -> this.studentCountSink = emitter, FluxSink.OverflowStrategy.LATEST).share();
     }
 
     @QueryMapping
@@ -36,6 +47,11 @@ public class StudentControllerGraphQL {
         StudentDTO student = new StudentDTO();
         student.setName(name);
         student.setEmail(email);
+
+        studentCount.incrementAndGet();
+        if (studentCountSink != null) {
+            studentCountSink.next(studentCount.get());
+        }
         return studentService.save(student);
     }
 
@@ -48,6 +64,11 @@ public class StudentControllerGraphQL {
         studentDTO.setName(name);
         studentDTO.setEmail(email);
         return studentService.save(studentDTO);
+    }
+
+    @SubscriptionMapping
+    public Publisher<Long> studentCount() {
+        return studentCountPublisher;
     }
 }
 
