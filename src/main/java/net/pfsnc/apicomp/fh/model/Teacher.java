@@ -1,9 +1,12 @@
 package net.pfsnc.apicomp.fh.model;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "teacher")
@@ -18,5 +21,8 @@ public class Teacher {
     private String name;
 
     private String department;
+
+    @OneToMany(mappedBy = "teacher")
+    private List<Course> courses;
 
 }
