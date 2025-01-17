@@ -1,5 +1,5 @@
 type Query {
-    students(limit: Int, offset: Int): [Student]
+    students: [Student]
     student(id: ID!): Student
     courses(limit: Int, offset: Int): [Course]
     course(id: ID!): Course

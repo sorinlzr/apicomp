@@ -1,7 +1,10 @@
+import com.google.protobuf.gradle.id
+
 plugins {
 	id("java")
 	id("org.springframework.boot") version "3.3.5"
 	id("io.spring.dependency-management") version "1.1.6"
+	id("com.google.protobuf") version "0.9.4"
 }
 
 group = "net.pfsnc"
@@ -21,9 +24,16 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url = uri("https://repo.spring.io/snapshot") }
 }
 
+extra["springGrpcVersion"] = "0.3.0-SNAPSHOT"
+
 dependencies {
+	implementation(platform("io.github.danielliu1123:grpc-starter-dependencies:3.4.1"))
+	implementation("io.github.danielliu1123:grpc-boot-starter")
+	implementation("io.grpc:grpc-testing-proto")
+
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-data-rest")
 	implementation("org.springframework.boot:spring-boot-starter-graphql")
@@ -38,6 +48,41 @@ dependencies {
 	testImplementation("org.springframework:spring-webflux")
 	testImplementation("org.springframework.graphql:spring-graphql-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+dependencyManagement {
+	imports {
+		mavenBom("org.springframework.grpc:spring-grpc-dependencies:${property("springGrpcVersion")}")
+	}
+}
+
+protobuf {
+	protoc {
+		artifact = "com.google.protobuf:protoc"
+	}
+	plugins {
+		id("grpc") {
+			artifact = "io.grpc:protoc-gen-grpc-java"
+		}
+	}
+	generateProtoTasks {
+		all().forEach { task ->
+			task.plugins {
+				id("grpc") {
+					option("jakarta_omit")
+					option("@generated=omit")
+				}
+			}
+		}
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs("build/generated/source/proto/main/grpc", "build/generated/source/proto/main/java")
+		}
+	}
 }
 
 tasks.withType<Test> {

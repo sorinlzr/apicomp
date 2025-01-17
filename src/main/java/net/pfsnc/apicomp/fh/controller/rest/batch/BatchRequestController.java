@@ -81,7 +81,7 @@ public class BatchRequestController {
                         switch (request.getEndpoint()) {
                             case "/students" -> {
                                 StudentDTO student = objectMapper.convertValue(request.getBody(), StudentDTO.class);
-                                responses.add(new BatchResponse(request, ResponseEntity.ok(studentService.save(student))));
+                                responses.add(new BatchResponse(request, ResponseEntity.ok(studentService.create(student))));
                             }
                             case "/teachers" -> {
                                 TeacherDTO teacher = objectMapper.convertValue(request.getBody(), TeacherDTO.class);

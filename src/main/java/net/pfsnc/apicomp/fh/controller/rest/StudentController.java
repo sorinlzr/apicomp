@@ -21,7 +21,7 @@ public class StudentController {
 
     @GetMapping
     public List<StudentDTO> getAllStudents(Pageable pageable) {
-        return studentService.findAll(pageable);
+        return studentService.findAll();
     }
 
     @GetMapping("/{id}")
@@ -31,6 +31,6 @@ public class StudentController {
 
     @PostMapping
     public StudentDTO createStudent(@RequestBody StudentDTO student) {
-        return studentService.save(student);
+        return studentService.create(student);
     }
 }

@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "net.pfsnc.apicomp.fh.grpc";
+option java_outer_classname = "StudentProto";
+
+message StudentResponse {
+  int64 id = 1;
+  string name = 2;
+  string email = 3;
+  repeated Enrollment enrollments= 4;
+}
+
+message Enrollment {
+  int64 id =1;
+  string courseId = 2;
+  string courseDescription = 3;
+  string studentId = 4;
+  string studentName = 5;
+  string studentEmail = 6;
+  string enrollmentDate = 7;
+}
+
+message Empty {}
+
+message StudentRequest {
+  int64 id = 1;
+}
+
+message GetAllStudentsResponse {
+  repeated StudentResponse students = 1;
+}
+
+message CreateStudentRequest {
+  string name = 1;
+  string email = 2;
+}
+
+message StudentCountResponse {
+  int32 count = 1;
+}
+
+service StudentService {
+  rpc GetStudent(StudentRequest) returns (StudentResponse);
+  rpc GetAllStudents(Empty) returns (GetAllStudentsResponse);
+  rpc CreateStudent(CreateStudentRequest) returns (StudentResponse);
+  rpc SubscribeStudentCount (Empty) returns (stream StudentCountResponse);
+
+}

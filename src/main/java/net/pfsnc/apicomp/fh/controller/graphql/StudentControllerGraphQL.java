@@ -8,33 +8,20 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SubscriptionMapping;
 import org.springframework.stereotype.Controller;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Controller
 public class StudentControllerGraphQL {
     private final StudentService studentService;
 
-    private final AtomicLong studentCount;
-    private FluxSink<Long> studentCountSink;
-    private final Flux<Long> studentCountPublisher;
-
     public StudentControllerGraphQL(StudentService studentService) {
         this.studentService = studentService;
-        studentCount = new AtomicLong(studentService.count());
-        this.studentCountPublisher = Flux.<Long>create(emitter -> this.studentCountSink = emitter, FluxSink.OverflowStrategy.LATEST).share();
     }
 
     @QueryMapping
-    public List<StudentDTO> students(@Argument Integer limit, @Argument Integer offset) {
-        System.out.println("Fetching students with limit: " + limit + ", offset: " + offset);
-
-        int actualLimit = (limit != null) ? limit : 10;
-        int actualOffset = (offset != null) ? offset : 0;
-        return studentService.findAllWithPagination(actualLimit, actualOffset);
+    public List<StudentDTO> students() {
+        return studentService.findAll();
     }
 
     @QueryMapping
@@ -48,11 +35,7 @@ public class StudentControllerGraphQL {
         student.setName(name);
         student.setEmail(email);
 
-        studentCount.incrementAndGet();
-        if (studentCountSink != null) {
-            studentCountSink.next(studentCount.get());
-        }
-        return studentService.save(student);
+        return studentService.create(student);
     }
 
     @MutationMapping
@@ -63,12 +46,12 @@ public class StudentControllerGraphQL {
         }
         studentDTO.setName(name);
         studentDTO.setEmail(email);
-        return studentService.save(studentDTO);
+        return studentService.create(studentDTO);
     }
 
     @SubscriptionMapping
     public Publisher<Long> studentCount() {
-        return studentCountPublisher;
+        return studentService.getStudentCountPublisher();
     }
 }
 
