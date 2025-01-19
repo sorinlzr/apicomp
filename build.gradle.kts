@@ -33,6 +33,8 @@ dependencies {
 	implementation(platform("io.github.danielliu1123:grpc-starter-dependencies:3.4.1"))
 	implementation("io.github.danielliu1123:grpc-boot-starter")
 	implementation("io.grpc:grpc-testing-proto")
+	implementation("com.google.protobuf:protobuf-java")
+	implementation("com.google.protobuf:protobuf-java-util")
 
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-data-rest")
