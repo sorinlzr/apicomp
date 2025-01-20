@@ -14,6 +14,7 @@ import reactor.core.publisher.FluxSink;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Transactional
 @Service
 public class StudentService {
 
@@ -28,18 +29,16 @@ public class StudentService {
         this.studentCount = new AtomicLong(studentRepository.count());
     }
 
-    @Transactional
+
     public List<StudentDTO> findAll() {
         return studentRepository.findAll().stream().map(StudentMapper::toStudentDTO).toList();
     }
 
-    @Transactional
     public List<StudentDTO> findAll(Pageable pageable) {
         return studentRepository.findAll(pageable)
                 .map(StudentMapper::toStudentDTO).toList();
     }
 
-    @Transactional
     public StudentDTO findById(Long id) {
         return studentRepository.findById(id).map(StudentMapper::toStudentDTO).orElse(null);
     }
@@ -58,8 +57,13 @@ public class StudentService {
         return StudentMapper.toStudentDTO(newStudent);
     }
 
-    public void deleteById(Long id) {
+    public boolean deleteById(Long id) {
+        StudentDTO studentDTO = findById(id);
+        if (studentDTO == null) {
+            return false;
+        }
         studentRepository.deleteById(id);
+        return true;
     }
 
     public Publisher<Long> getStudentCountPublisher() {

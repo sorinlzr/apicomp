@@ -33,4 +33,9 @@ public class StudentController {
     public StudentDTO createStudent(@RequestBody StudentDTO student) {
         return studentService.create(student);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteStudent(@PathVariable Long id) {
+        studentService.deleteById(id);
+    }
 }
