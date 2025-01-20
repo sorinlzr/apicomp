@@ -8,8 +8,6 @@ type Query {
     enrollmentsForCourse(courseId: Int): [Enrollment]
     enrollmentsForStudent(studentId: Int): [Enrollment]
     enrollment(id: ID!): Enrollment
-    universities(limit: Int, offset: Int): [University]
-    university(id: ID!): University
 }
 
 type Mutation {
