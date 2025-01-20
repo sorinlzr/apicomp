@@ -49,6 +49,11 @@ public class StudentControllerGraphQL {
         return studentService.create(studentDTO);
     }
 
+    @MutationMapping
+    public void deleteStudent(@Argument Long id) {
+        studentService.deleteById(id);
+    }
+
     @SubscriptionMapping
     public Publisher<Long> studentCount() {
         return studentService.getStudentCountPublisher();

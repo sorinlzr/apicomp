@@ -15,6 +15,7 @@ type Query {
 type Mutation {
     createStudent(name: String!, email: String!): Student
     updateStudent(id: ID!, name: String!, email: String!): Student
+    deleteStudent(id: ID!): Boolean
     createCourse(title: String!, description: String!): Course
     updateCourse(id: ID!, title: String!, description: String!): Course
     createTeacher(name: String!, department: String!): Teacher
