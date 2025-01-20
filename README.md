@@ -36,6 +36,28 @@ To start the application, run:
 
 On startup the H2 database should be initialized with some sample data usint Liquibase.
 
+### Build Docker Image
+
+To build the Docker image, run:
+```sh
+docker build -t apicomp:latest .
+```
+
+### Run Docker Container
+
+To run the Docker container, run:
+```sh
+docker run -p 8080:8080 -p 9090:9090 apicomp:latest
+```
+
+### Run with Docker Compose
+
+To start the application using Docker Compose, run:
+```sh
+docker-compose up --build
+```
+
+
 ## APIs
 
 All three APIs implement the same functionalities to manage **students**. 
