@@ -40,10 +40,16 @@ message StudentCountResponse {
   int32 count = 1;
 }
 
+message DeleteStudentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
 service StudentService {
   rpc GetStudent(StudentRequest) returns (StudentResponse);
   rpc GetAllStudents(Empty) returns (GetAllStudentsResponse);
   rpc CreateStudent(CreateStudentRequest) returns (StudentResponse);
   rpc SubscribeStudentCount (Empty) returns (stream StudentCountResponse);
+  rpc DeleteStudent(StudentRequest) returns (DeleteStudentResponse);
 
 }

@@ -56,6 +56,17 @@ public class StudentGrpcService extends StudentServiceGrpc.StudentServiceImplBas
     }
 
     @Override
+    public void deleteStudent(StudentRequest request, StreamObserver<DeleteStudentResponse> responseObserver) {
+        boolean success = studentService.deleteById(request.getId());
+        DeleteStudentResponse response = DeleteStudentResponse.newBuilder()
+                .setSuccess(success)
+                .setMessage(success ? "Student deleted successfully" : "Failed to delete student")
+                .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
     public void getAllStudents(Empty request, StreamObserver<GetAllStudentsResponse> responseObserver) {
         Flux<StudentDTO> studentFlux = Flux.fromIterable(studentService.findAll());
         studentFlux.collectList()
