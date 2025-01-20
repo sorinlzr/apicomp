@@ -34,9 +34,12 @@ To start the application, run:
 ./gradlew bootRun
 ```
 
+On startup the H2 database should be initialized with some sample data usint Liquibase.
+
 ## APIs
 
-All three APIs implement the same functionalities to manage students. The REST API is implemented using Spring Boot, the GraphQL API is implemented using Spring Boot and GraphQL Java, and the gRPC API is implemented using Spring Boot and gRPC.
+All three APIs implement the same functionalities to manage **students**. 
+The REST API is implemented using Spring Boot, the GraphQL API is implemented using Spring Boot and GraphQL Java, and the gRPC API is implemented using Spring Boot and gRPC.
 
 ### REST API
 
@@ -97,7 +100,7 @@ type Mutation {
 
 ```graphql
 query {
-    getAllStudents {
+   students {
         id
         name
         email
