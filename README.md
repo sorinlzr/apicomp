@@ -57,11 +57,19 @@ To start the application using Docker Compose, run:
 docker-compose up --build
 ```
 
-
 ## APIs
 
 All three APIs implement the same functionalities to manage **students**. 
 The REST API is implemented using Spring Boot, the GraphQL API is implemented using Spring Boot and GraphQL Java, and the gRPC API is implemented using Spring Boot and gRPC.
+
+### Postman Collection and Environment
+
+In the `src/main/resources/postman` directory, there is a Postman collection and environment for importing into the Postman app.
+
+To see the available GraphQL endpoints in Postman, create a new GraphQL request and use schema introspection in Postman with the URL `http://localhost:8080/graphql`.
+
+To see the available gRPC endpoints in Postman, create a new gRPC request in Postman and import the service definitions that are in `src/main/proto`.
+
 
 ### REST API
 
