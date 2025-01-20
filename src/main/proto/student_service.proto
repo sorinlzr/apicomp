@@ -45,11 +45,24 @@ message DeleteStudentResponse {
   string message = 2;
 }
 
+message UpdateStudentRequest {
+  int64 id = 1;
+  string name = 2;
+  string email = 3;
+}
+
+message UpdateStudentResponse {
+  int64 id = 1;
+  string name = 2;
+  string email = 3;
+}
+
 service StudentService {
   rpc GetStudent(StudentRequest) returns (StudentResponse);
   rpc GetAllStudents(Empty) returns (GetAllStudentsResponse);
   rpc CreateStudent(CreateStudentRequest) returns (StudentResponse);
   rpc SubscribeStudentCount (Empty) returns (stream StudentCountResponse);
   rpc DeleteStudent(StudentRequest) returns (DeleteStudentResponse);
+  rpc UpdateStudent(UpdateStudentRequest) returns (UpdateStudentResponse);
 
 }

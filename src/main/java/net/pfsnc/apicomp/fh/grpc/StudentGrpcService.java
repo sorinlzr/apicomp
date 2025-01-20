@@ -98,6 +98,30 @@ public class StudentGrpcService extends StudentServiceGrpc.StudentServiceImplBas
     }
 
     @Override
+    public void updateStudent(UpdateStudentRequest request, StreamObserver<UpdateStudentResponse> responseObserver) {
+        LOGGER.info("Updating student with id: " + request.getId());
+        try {
+            validateUpdateStudentRequest(request);
+            StudentDTO student = new StudentDTO();
+            student.setId(request.getId());
+            student.setName(request.getName());
+            student.setEmail(request.getEmail());
+            student = studentService.update(student);
+            UpdateStudentResponse response = UpdateStudentResponse.newBuilder()
+                    .setId(student.getId())
+                    .setName(student.getName())
+                    .setEmail(student.getEmail())
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (ValidationException e) {
+            responseObserver.onError(new StatusRuntimeException(Status.INVALID_ARGUMENT.withDescription(e.getMessage())));
+        } catch (Exception e) {
+            responseObserver.onError(new StatusRuntimeException(Status.INTERNAL.withDescription("Internal server error")));
+        }
+    }
+
+    @Override
     public void getAllStudents(Empty request, StreamObserver<GetAllStudentsResponse> responseObserver) {
         LOGGER.info("Getting all students");
         Flux<StudentDTO> studentFlux = Flux.fromIterable(studentService.findAll());
@@ -144,6 +168,21 @@ public class StudentGrpcService extends StudentServiceGrpc.StudentServiceImplBas
     }
 
     private void validateCreateStudentRequest(CreateStudentRequest request) {
+        if (request.getName() == null || request.getName().isEmpty()) {
+            throw new ValidationException("Name is mandatory");
+        }
+        if (request.getEmail() == null || request.getEmail().isEmpty()) {
+            throw new ValidationException("Email is mandatory");
+        }
+        if (!request.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new ValidationException("Email should be valid");
+        }
+    }
+
+    private void validateUpdateStudentRequest(UpdateStudentRequest request) {
+        if (request.getId() <= 0) {
+            throw new ValidationException("ID is mandatory and must be greater than 0");
+        }
         if (request.getName() == null || request.getName().isEmpty()) {
             throw new ValidationException("Name is mandatory");
         }
