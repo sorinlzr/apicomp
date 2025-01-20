@@ -1,14 +1,4 @@
 spring:
-#  ssl:
-#    bundle:
-#      jks:
-#        server:
-#          key:
-#            alias: "apicomp"
-#          keystore:
-#            location: "keystore.p12"
-#            password: "changeit"
-#            type: "PKCS12"
   application:
     name: apicomp
   datasource:
@@ -22,24 +12,12 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
   liquibase:
     change-log: db/changelog/db.changelog-master.yaml
-    enabled: false
+    enabled: true
   graphql:
     websocket:
       path: /graphql
 grpc:
   server:
     port: 9090
-#  security:
-#    auth:
-#      enabled: true
 testRunner:
   database: false
-#server:
-#  ssl:
-#    enabled: true
-#    key-store-type: PKCS12
-#    key-store: keystore.p12
-#    key-store-password: changeit
-#    protocol: TLS
-#    enabled-protocols: TLSv1.2
-#    key-alias: apicomp
