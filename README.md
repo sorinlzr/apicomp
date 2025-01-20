@@ -157,6 +157,7 @@ service StudentService {
     rpc DeleteStudent (StudentRequest) returns (DeleteStudentResponse);
     rpc GetAllStudents (Empty) returns (GetAllStudentsResponse);
     rpc SubscribeStudentCount (Empty) returns (stream StudentCountResponse);
+    rpc UpdateStudent(UpdateStudentRequest) returns (UpdateStudentResponse);
 }
 
 message StudentRequest {
@@ -178,6 +179,18 @@ message StudentResponse {
 message DeleteStudentResponse {
     bool success = 1;
     string message = 2;
+}
+
+message UpdateStudentRequest {
+  int64 id = 1;
+  string name = 2;
+  string email = 3;
+}
+
+message UpdateStudentResponse {
+  int64 id = 1;
+  string name = 2;
+  string email = 3;
 }
 
 message GetAllStudentsResponse {
