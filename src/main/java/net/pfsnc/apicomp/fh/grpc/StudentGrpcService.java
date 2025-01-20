@@ -1,9 +1,13 @@
 package net.pfsnc.apicomp.fh.grpc;
 
 import grpcstarter.server.GrpcService;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.pfsnc.apicomp.fh.dto.StudentDTO;
+import net.pfsnc.apicomp.fh.exception.ValidationException;
 import net.pfsnc.apicomp.fh.service.StudentService;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 
 import java.util.logging.Logger;
@@ -22,55 +26,75 @@ public class StudentGrpcService extends StudentServiceGrpc.StudentServiceImplBas
     @Override
     public void getStudent(StudentRequest request, StreamObserver<StudentResponse> responseObserver) {
         LOGGER.info("Getting student by id: " + request.getId());
-        StudentDTO student = studentService.findById(request.getId());
-        StudentResponse.Builder responseBuilder = StudentResponse.newBuilder()
-                .setId(student.getId())
-                .setName(student.getName())
-                .setEmail(student.getEmail());
+        try {
+            StudentDTO student = studentService.findById(request.getId());
+            StudentResponse.Builder responseBuilder = StudentResponse.newBuilder()
+                    .setId(student.getId())
+                    .setName(student.getName())
+                    .setEmail(student.getEmail());
 
-        student.getEnrollments().forEach(enrollment -> {
-            Enrollment enrollmentProto = Enrollment.newBuilder()
-                    .setId(enrollment.getId())
-                    .setCourseDescription(enrollment.getCourseTitle())
-                    .setStudentId(enrollment.getStudentId().toString())
-                    .setStudentName(enrollment.getStudentName())
-                    .setStudentEmail(enrollment.getStudentEmail())
-                    .setEnrollmentDate(enrollment.getEnrollmentDate().toString())
-                    .build();
-            responseBuilder.addEnrollments(enrollmentProto);
-        });
+            student.getEnrollments().forEach(enrollment -> {
+                Enrollment enrollmentProto = Enrollment.newBuilder()
+                        .setId(enrollment.getId())
+                        .setCourseDescription(enrollment.getCourseTitle())
+                        .setStudentId(enrollment.getStudentId().toString())
+                        .setStudentName(enrollment.getStudentName())
+                        .setStudentEmail(enrollment.getStudentEmail())
+                        .setEnrollmentDate(enrollment.getEnrollmentDate().toString())
+                        .build();
+                responseBuilder.addEnrollments(enrollmentProto);
+            });
 
-        responseObserver.onNext(responseBuilder.build());
-        responseObserver.onCompleted();
+            responseObserver.onNext(responseBuilder.build());
+            responseObserver.onCompleted();
+        } catch (ResponseStatusException e) {
+            responseObserver.onError(new StatusRuntimeException(Status.INVALID_ARGUMENT.withDescription(e.getMessage())));
+        } catch (Exception e) {
+            responseObserver.onError(new StatusRuntimeException(Status.INTERNAL.withDescription("Internal server error")));
+        }
     }
 
 
     @Override
     public void createStudent(CreateStudentRequest request, StreamObserver<StudentResponse> responseObserver) {
-        LOGGER.info("Creating student with name: " + request.getName() + " and email: " + request.getEmail());
-        StudentDTO student = new StudentDTO();
-        student.setName(request.getName());
-        student.setEmail(request.getEmail());
-        student = studentService.create(student);
-        StudentResponse response = StudentResponse.newBuilder()
-                .setId(student.getId())
-                .setName(student.getName())
-                .setEmail(student.getEmail())
-                .build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+        try {
+            validateCreateStudentRequest(request);
+            LOGGER.info("Creating student with name: " + request.getName() + " and email: " + request.getEmail());
+            StudentDTO student = new StudentDTO();
+            student.setName(request.getName());
+            student.setEmail(request.getEmail());
+            student = studentService.create(student);
+            StudentResponse response = StudentResponse.newBuilder()
+                    .setId(student.getId())
+                    .setName(student.getName())
+                    .setEmail(student.getEmail())
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (ValidationException e) {
+            responseObserver.onError(new StatusRuntimeException(Status.INVALID_ARGUMENT.withDescription(e.getMessage())));
+        } catch (Exception e) {
+            responseObserver.onError(new StatusRuntimeException(Status.INTERNAL.withDescription("Internal server error")));
+        }
+
     }
 
     @Override
     public void deleteStudent(StudentRequest request, StreamObserver<DeleteStudentResponse> responseObserver) {
         LOGGER.info("Deleting student by id: " + request.getId());
-        boolean success = studentService.deleteById(request.getId());
-        DeleteStudentResponse response = DeleteStudentResponse.newBuilder()
-                .setSuccess(success)
-                .setMessage(success ? "Student deleted successfully" : "Failed to delete student")
-                .build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+        try {
+            boolean success = studentService.deleteById(request.getId());
+            DeleteStudentResponse response = DeleteStudentResponse.newBuilder()
+                    .setSuccess(success)
+                    .setMessage(success ? "Student deleted successfully" : "Failed to delete student")
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (ResponseStatusException e) {
+            responseObserver.onError(new StatusRuntimeException(Status.INVALID_ARGUMENT.withDescription(e.getMessage())));
+        } catch (Exception e) {
+            responseObserver.onError(new StatusRuntimeException(Status.INTERNAL.withDescription("Internal server error")));
+        }
     }
 
     @Override
@@ -117,5 +141,17 @@ public class StudentGrpcService extends StudentServiceGrpc.StudentServiceImplBas
                 .doOnComplete(responseObserver::onCompleted)
                 .doOnError(responseObserver::onError)
                 .subscribe();
+    }
+
+    private void validateCreateStudentRequest(CreateStudentRequest request) {
+        if (request.getName() == null || request.getName().isEmpty()) {
+            throw new ValidationException("Name is mandatory");
+        }
+        if (request.getEmail() == null || request.getEmail().isEmpty()) {
+            throw new ValidationException("Email is mandatory");
+        }
+        if (!request.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new ValidationException("Email should be valid");
+        }
     }
 }

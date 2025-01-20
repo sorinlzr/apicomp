@@ -1,9 +1,9 @@
 package net.pfsnc.apicomp.fh.controller.rest;
 
+import jakarta.validation.Valid;
 import net.pfsnc.apicomp.fh.dto.StudentDTO;
 import net.pfsnc.apicomp.fh.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<StudentDTO> getAllStudents(Pageable pageable) {
+    public List<StudentDTO> getAllStudents() {
         LOGGER.info("Getting all students");
         return studentService.findAll();
     }
@@ -35,9 +35,16 @@ public class StudentController {
     }
 
     @PostMapping
-    public StudentDTO createStudent(@RequestBody StudentDTO student) {
+    public StudentDTO createStudent(@Valid @RequestBody StudentDTO student) {
         LOGGER.info("Creating student: " + student);
         return studentService.create(student);
+    }
+
+    @PutMapping("/{id}")
+    public StudentDTO updateStudent(@PathVariable Long id, @Valid @RequestBody StudentDTO student) {
+        LOGGER.info("Updating student with id: " + id);
+        student.setId(id);
+        return studentService.update(student);
     }
 
     @DeleteMapping("/{id}")

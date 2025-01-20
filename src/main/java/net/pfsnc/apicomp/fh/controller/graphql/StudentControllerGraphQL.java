@@ -1,6 +1,7 @@
 package net.pfsnc.apicomp.fh.controller.graphql;
 
 import net.pfsnc.apicomp.fh.dto.StudentDTO;
+import net.pfsnc.apicomp.fh.exception.ValidationException;
 import net.pfsnc.apicomp.fh.service.StudentService;
 import org.reactivestreams.Publisher;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -36,6 +37,7 @@ public class StudentControllerGraphQL {
     @MutationMapping
     public StudentDTO createStudent(@Argument String name, @Argument String email) {
         LOGGER.info("Creating student with name: " + name + " and email: " + email);
+        validateStudent(name, email);
         StudentDTO student = new StudentDTO();
         student.setName(name);
         student.setEmail(email);
@@ -46,13 +48,12 @@ public class StudentControllerGraphQL {
     @MutationMapping
     public StudentDTO updateStudent(@Argument Long id, @Argument String name, @Argument String email) {
         LOGGER.info("Updating student with id: " + id + " to name: " + name + " and email: " + email);
-        StudentDTO studentDTO = studentService.findById(id);
-        if (studentDTO == null) {
-            return null;
-        }
+        validateStudent(name, email);
+        StudentDTO studentDTO = new StudentDTO();
+        studentDTO.setId(id);
         studentDTO.setName(name);
         studentDTO.setEmail(email);
-        return studentService.create(studentDTO);
+        return studentService.update(studentDTO);
     }
 
     @MutationMapping
@@ -65,6 +66,18 @@ public class StudentControllerGraphQL {
     public Publisher<Long> studentCount() {
         LOGGER.info("Subscribing to student count");
         return studentService.getStudentCountPublisher();
+    }
+
+    private void validateStudent(String name, String email) {
+        if (name == null || name.isEmpty()) {
+            throw new ValidationException("Name is mandatory");
+        }
+        if (email == null || email.isEmpty()) {
+            throw new ValidationException("Email is mandatory");
+        }
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new ValidationException("Email should be valid");
+        }
     }
 }
 

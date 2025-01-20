@@ -6,8 +6,10 @@ import net.pfsnc.apicomp.fh.model.Student;
 import net.pfsnc.apicomp.fh.repository.StudentRepository;
 import org.reactivestreams.Publisher;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
@@ -40,7 +42,11 @@ public class StudentService {
     }
 
     public StudentDTO findById(Long id) {
-        return studentRepository.findById(id).map(StudentMapper::toStudentDTO).orElse(null);
+        Student existingStudent = studentRepository.findById(id).orElse(null);
+        if (existingStudent == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found");
+        }
+        return StudentMapper.toStudentDTO(existingStudent);
     }
 
     public StudentDTO create(StudentDTO student) {
@@ -60,10 +66,21 @@ public class StudentService {
     public boolean deleteById(Long id) {
         StudentDTO studentDTO = findById(id);
         if (studentDTO == null) {
-            return false;
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found");
         }
         studentRepository.deleteById(id);
         return true;
+    }
+
+    public StudentDTO update(StudentDTO student) {
+        Student existingStudent = studentRepository.findById(student.getId()).orElse(null);
+        if (existingStudent == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found");
+        }
+        existingStudent.setName(student.getName());
+        existingStudent.setEmail(student.getEmail());
+        existingStudent = studentRepository.save(existingStudent);
+        return StudentMapper.toStudentDTO(existingStudent);
     }
 
     public Publisher<Long> getStudentCountPublisher() {
