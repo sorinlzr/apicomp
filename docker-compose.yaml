@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  apicomp:
+    image: apicomp:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    volumes:
+      - ./src/main/resources/application.yaml:/app/application.yaml
+    command: ["java", "-jar", "/app/apicomp.jar", "--spring.config.location=file:/app/application.yaml"]
