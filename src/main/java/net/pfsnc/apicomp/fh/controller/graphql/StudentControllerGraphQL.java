@@ -10,9 +10,11 @@ import org.springframework.graphql.data.method.annotation.SubscriptionMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Controller
 public class StudentControllerGraphQL {
+    private final Logger LOGGER = Logger.getLogger(StudentControllerGraphQL.class.getName());
     private final StudentService studentService;
 
     public StudentControllerGraphQL(StudentService studentService) {
@@ -21,16 +23,19 @@ public class StudentControllerGraphQL {
 
     @QueryMapping
     public List<StudentDTO> students() {
+        LOGGER.info("Getting all students");
         return studentService.findAll();
     }
 
     @QueryMapping
     public StudentDTO student(@Argument Long id) {
+        LOGGER.info("Getting student by id: " + id);
         return studentService.findById(id);
     }
 
     @MutationMapping
     public StudentDTO createStudent(@Argument String name, @Argument String email) {
+        LOGGER.info("Creating student with name: " + name + " and email: " + email);
         StudentDTO student = new StudentDTO();
         student.setName(name);
         student.setEmail(email);
@@ -40,6 +45,7 @@ public class StudentControllerGraphQL {
 
     @MutationMapping
     public StudentDTO updateStudent(@Argument Long id, @Argument String name, @Argument String email) {
+        LOGGER.info("Updating student with id: " + id + " to name: " + name + " and email: " + email);
         StudentDTO studentDTO = studentService.findById(id);
         if (studentDTO == null) {
             return null;
@@ -51,11 +57,13 @@ public class StudentControllerGraphQL {
 
     @MutationMapping
     public void deleteStudent(@Argument Long id) {
+        LOGGER.info("Deleting student by id: " + id);
         studentService.deleteById(id);
     }
 
     @SubscriptionMapping
     public Publisher<Long> studentCount() {
+        LOGGER.info("Subscribing to student count");
         return studentService.getStudentCountPublisher();
     }
 }

@@ -6,8 +6,12 @@ import net.pfsnc.apicomp.fh.dto.StudentDTO;
 import net.pfsnc.apicomp.fh.service.StudentService;
 import reactor.core.publisher.Flux;
 
+import java.util.logging.Logger;
+
 @GrpcService
 public class StudentGrpcService extends StudentServiceGrpc.StudentServiceImplBase {
+
+    private final Logger LOGGER = Logger.getLogger(StudentGrpcService.class.getName());
 
     private final StudentService studentService;
 
@@ -17,6 +21,7 @@ public class StudentGrpcService extends StudentServiceGrpc.StudentServiceImplBas
 
     @Override
     public void getStudent(StudentRequest request, StreamObserver<StudentResponse> responseObserver) {
+        LOGGER.info("Getting student by id: " + request.getId());
         StudentDTO student = studentService.findById(request.getId());
         StudentResponse.Builder responseBuilder = StudentResponse.newBuilder()
                 .setId(student.getId())
@@ -42,6 +47,7 @@ public class StudentGrpcService extends StudentServiceGrpc.StudentServiceImplBas
 
     @Override
     public void createStudent(CreateStudentRequest request, StreamObserver<StudentResponse> responseObserver) {
+        LOGGER.info("Creating student with name: " + request.getName() + " and email: " + request.getEmail());
         StudentDTO student = new StudentDTO();
         student.setName(request.getName());
         student.setEmail(request.getEmail());
@@ -57,6 +63,7 @@ public class StudentGrpcService extends StudentServiceGrpc.StudentServiceImplBas
 
     @Override
     public void deleteStudent(StudentRequest request, StreamObserver<DeleteStudentResponse> responseObserver) {
+        LOGGER.info("Deleting student by id: " + request.getId());
         boolean success = studentService.deleteById(request.getId());
         DeleteStudentResponse response = DeleteStudentResponse.newBuilder()
                 .setSuccess(success)
@@ -68,6 +75,7 @@ public class StudentGrpcService extends StudentServiceGrpc.StudentServiceImplBas
 
     @Override
     public void getAllStudents(Empty request, StreamObserver<GetAllStudentsResponse> responseObserver) {
+        LOGGER.info("Getting all students");
         Flux<StudentDTO> studentFlux = Flux.fromIterable(studentService.findAll());
         studentFlux.collectList()
                 .map(students -> {
@@ -102,6 +110,7 @@ public class StudentGrpcService extends StudentServiceGrpc.StudentServiceImplBas
 
     @Override
     public void subscribeStudentCount(Empty request, StreamObserver<StudentCountResponse> responseObserver) {
+        LOGGER.info("Subscribing to student count");
         Flux<Long> studentCountFlux = Flux.from(studentService.getStudentCountPublisher());
         studentCountFlux.map(count -> StudentCountResponse.newBuilder().setCount(count.intValue()).build())
                 .doOnNext(responseObserver::onNext)

@@ -13,8 +13,12 @@ import net.pfsnc.apicomp.fh.service.StudentService;
 import net.pfsnc.apicomp.fh.service.TeacherService;
 import org.springframework.stereotype.Service;
 
+import java.util.logging.Logger;
+
 @Service
 public class BatchGrpcService extends BatchServiceGrpc.BatchServiceImplBase {
+    private final Logger LOGGER = Logger.getLogger(BatchGrpcService.class.getName());
+
     private final StudentService studentService;
     private final TeacherService teacherService;
     private final CourseService courseService;
@@ -30,6 +34,7 @@ public class BatchGrpcService extends BatchServiceGrpc.BatchServiceImplBase {
     }
     @Override
     public void processBatch(BatchRequest request, StreamObserver<SingleResponse> responseObserver) {
+        LOGGER.info("Processing batch requests");
         for (SingleRequest singleRequest : request.getRequestsList()) {
             SingleResponse.Builder singleResponseBuilder = SingleResponse.newBuilder()
                     .setEndpoint(singleRequest.getEndpoint());
@@ -57,19 +62,23 @@ public class BatchGrpcService extends BatchServiceGrpc.BatchServiceImplBase {
     private void handleGet(SingleRequest request, SingleResponse.Builder responseBuilder) throws JsonProcessingException {
         String endpoint = request.getEndpoint();
         if (endpoint.equals("/students")) {
+            LOGGER.info("Getting all students");
             responseBuilder
                     .setStatus("200 OK")
                     .setBody(objectMapper.writeValueAsString(studentService.findAll()));
         } else if (endpoint.startsWith("/students/")) {
+            LOGGER.info("Getting student by id");
             Long id = Long.parseLong(endpoint.split("/")[2]);
             responseBuilder
                     .setStatus("200 OK")
                     .setBody(objectMapper.writeValueAsString(studentService.findById(id)));
         } else if (endpoint.equals("/teachers")) {
+            LOGGER.info("Getting all teachers");
             responseBuilder
                     .setStatus("200 OK")
                     .setBody(objectMapper.writeValueAsString(teacherService.findAll()));
         } else {
+            LOGGER.info("Endpoint not supported: " + endpoint);
             responseBuilder
                     .setStatus("404 Not Found")
                     .setBody("Endpoint not supported: " + endpoint);
@@ -81,16 +90,19 @@ public class BatchGrpcService extends BatchServiceGrpc.BatchServiceImplBase {
         String json = JsonFormat.printer().print(request.getBody());
 
         if (endpoint.equals("/students")) {
+            LOGGER.info("Creating student");
             StudentDTO student = objectMapper.readValue(json, StudentDTO.class);
             responseBuilder
                     .setStatus("200 OK")
                     .setBody(objectMapper.writeValueAsString(studentService.create(student)));
         } else if (endpoint.equals("/teachers")) {
+            LOGGER.info("Creating teacher");
             TeacherDTO teacher = objectMapper.readValue(json, TeacherDTO.class);
             responseBuilder
                     .setStatus("200 OK")
                     .setBody(objectMapper.writeValueAsString(teacherService.save(teacher)));
         } else {
+            LOGGER.info("Endpoint not supported: " + endpoint);
             responseBuilder
                     .setStatus("404 Not Found")
                     .setBody("Endpoint not supported: " + endpoint);

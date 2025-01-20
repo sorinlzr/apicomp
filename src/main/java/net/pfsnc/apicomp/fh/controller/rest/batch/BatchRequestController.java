@@ -22,10 +22,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/batch")
 public class BatchRequestController {
+
+    private final Logger LOGGER = Logger.getLogger(BatchRequestController.class.getName());
 
     private final StudentService studentService;
     private final TeacherService teacherService;
@@ -44,6 +47,7 @@ public class BatchRequestController {
 
     @PostMapping
     public List<BatchResponse> handleBatchRequests(@RequestBody BatchRequest batchRequest) {
+        LOGGER.info("Handling batch requests");
         List<BatchResponse> responses = new ArrayList<>();
 
         for (BatchRequest.Request request : batchRequest.getRequests()) {
@@ -56,23 +60,31 @@ public class BatchRequestController {
                 switch (request.getMethod()) {
                     case "GET":
                         if (request.getEndpoint().equals("/students")) {
-                            responses.add(new BatchResponse(request, ResponseEntity.ok(studentService.findAll(pageable))));
+                            LOGGER.info("Getting all students");
+                            responses.add(new BatchResponse(request, ResponseEntity.ok(studentService.findAll())));
                         } else if (request.getEndpoint().startsWith("/students/")) {
+                            LOGGER.info("Getting student by id");
                             Long id = Long.parseLong(request.getEndpoint().split("/")[2]);
                             responses.add(new BatchResponse(request, ResponseEntity.ok(studentService.findById(id))));
                         } else if (request.getEndpoint().equals("/teachers")) {
+                            LOGGER.info("Getting all teachers");
                             responses.add(new BatchResponse(request, ResponseEntity.ok(teacherService.findAll())));
                         } else if (request.getEndpoint().startsWith("/teachers/")) {
+                            LOGGER.info("Getting teacher by id");
                             Long id = Long.parseLong(request.getEndpoint().split("/")[2]);
                             responses.add(new BatchResponse(request, ResponseEntity.ok(teacherService.findById(id))));
                         } else if (request.getEndpoint().equals("/courses")) {
+                            LOGGER.info("Getting all courses");
                             responses.add(new BatchResponse(request, ResponseEntity.ok(courseService.findAll(pageable))));
                         } else if (request.getEndpoint().startsWith("/courses/")) {
+                            LOGGER.info("Getting course by id");
                             Long id = Long.parseLong(request.getEndpoint().split("/")[2]);
                             responses.add(new BatchResponse(request, ResponseEntity.ok(courseService.findById(id))));
                         } else if (request.getEndpoint().equals("/enrollments")) {
+                            LOGGER.info("Getting all enrollments");
                             responses.add(new BatchResponse(request, ResponseEntity.ok(enrollmentService.findAll(pageable))));
                         } else if (request.getEndpoint().startsWith("/enrollments/")) {
+                            LOGGER.info("Getting enrollment by id");
                             Long id = Long.parseLong(request.getEndpoint().split("/")[2]);
                             responses.add(new BatchResponse(request, ResponseEntity.ok(enrollmentService.findById(id))));
                         }
@@ -80,14 +92,17 @@ public class BatchRequestController {
                     case "POST":
                         switch (request.getEndpoint()) {
                             case "/students" -> {
+                                LOGGER.info("Creating student");
                                 StudentDTO student = objectMapper.convertValue(request.getBody(), StudentDTO.class);
                                 responses.add(new BatchResponse(request, ResponseEntity.ok(studentService.create(student))));
                             }
                             case "/teachers" -> {
+                                LOGGER.info("Creating teacher");
                                 TeacherDTO teacher = objectMapper.convertValue(request.getBody(), TeacherDTO.class);
                                 responses.add(new BatchResponse(request, ResponseEntity.ok(teacherService.save(teacher))));
                             }
                             case "/courses" -> {
+                                LOGGER.info("Creating course");
                                 CourseDTO course = objectMapper.convertValue(request.getBody(), CourseDTO.class);
                                 responses.add(new BatchResponse(request, ResponseEntity.ok(courseService.save(course))));
                             }
@@ -98,6 +113,7 @@ public class BatchRequestController {
                         }
                         break;
                     default:
+                        LOGGER.warning("Unsupported method");
                         responses.add(new BatchResponse(request, ResponseEntity.badRequest().body("Unsupported method")));
                 }
             } catch (Exception e) {
